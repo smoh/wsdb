@@ -27,7 +27,7 @@ setup(
 
     packages=find_packages(exclude=('tests',)),
 
-    install_requires=['pandas', 'records'],
+    install_requires=['psycopg2', 'records'],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
