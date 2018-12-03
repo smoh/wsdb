@@ -2,4 +2,7 @@
 
 __version__ = '0.1.0'
 __author__ = 'Semyeong Oh <smohspace@outlook.com>'
-__all__ = []
+
+from .core import wsdb
+
+__all__ = [wsdb]
