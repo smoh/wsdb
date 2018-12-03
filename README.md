@@ -23,6 +23,5 @@ and
 Requirements
 ------------
 
-- `records <https://github.com/kennethreitz/records>`_
-- `psycopg2 <http://initd.org/psycopg/>`_
-
+- [records](https://github.com/kennet/records)
+- [psycopg2](http://initd.org/psycopg/)
