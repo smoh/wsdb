@@ -7,10 +7,14 @@ Usage
 -----
 
 Put two-line text in wsdb/credentials.txt as in
+
   user
   password
+
 and
+
 .. code-block:: python
+
   from wsdb import wsdb
   rows = wsdb.query("<query>")
   rows.dataset.df
