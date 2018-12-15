@@ -1,9 +1,11 @@
 import os
 import logging
 import warnings
+from functools import lru_cache
+from contextlib import contextmanager
+
 import pandas as pd
 import records
-from functools import lru_cache
 
 __all__ = ['wsdb']
 
@@ -12,6 +14,29 @@ curdir = os.path.dirname(os.path.abspath(__file__))
 warnings.filterwarnings('ignore', category=UserWarning)
 
 logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def upload(db, df, name, **kwargs):
+    """
+    Upload and clean up table to database.
+
+    db : records.Database
+        database to upload DataFrame
+    df : pd.DataFrame
+        table to upload
+    name : str
+        name of the table
+
+    All kwargs passed to pd.DataFrame.to_sql.
+    """
+    if not isinstance(df, pd.DataFrame):
+        df = pd.DataFrame(df)
+    df.to_sql(name, db.db, **kwargs)
+    yield db
+    logger.debug('Deleting table')
+    db.db.execute('DROP TABLE {name}'.format(name=name))
+
 
 class WSDB(records.Database):
     """ Whole Sky Database client """
@@ -23,8 +48,27 @@ class WSDB(records.Database):
             super().__init__(
                 "postgres://{user}:{pw}@cappc127.ast.cam.ac.uk/wsdb".format(user=user, pw=pw))
 
+        self.user = user
         self._tables = None
         self._columns = None
+
+    def query(self, *args, **kwargs):
+        """
+        Query database.
+
+        upload : tuple of (str, pd.DataFrame)
+            If given, the table is uploaded with name of given string.
+            Once the query is executed, the table will be deleted.
+        """
+        if 'upload' in kwargs:
+            logging.debug('upload found in kwargs')
+            name, df = kwargs.pop('upload')
+            with upload(self, df, name) as db:
+                logging.debug('Querying after upload')
+                return db.query(*args, **kwargs)
+        else:
+            q = super().query(*args, **kwargs)
+            return q.dataset.df
 
     @property
     def tables(self):
@@ -38,7 +82,7 @@ class WSDB(records.Database):
                 from information_schema.tables
                 order by table_schema;
                 """
-            self._tables = self.query(query_get_all_tables).dataset.df
+            self._tables = self.query(query_get_all_tables)
         return self._tables
 
     @property
@@ -52,7 +96,7 @@ class WSDB(records.Database):
                 SELECT table_schema, table_name, column_name, data_type
                 FROM information_schema.columns
                 """
-            self._columns = self.query(query_get_all_columns).dataset.df
+            self._columns = self.query(query_get_all_columns)
         return self._columns
 
     @lru_cache(maxsize=16)
