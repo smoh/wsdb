@@ -1,6 +1,7 @@
 import os
 import logging
 import warnings
+import pandas as pd
 import records
 from functools import lru_cache
 
@@ -82,10 +83,7 @@ class WSDB(records.Database):
         Other kwargs are passed to pd.DataFrame.to_sql
         """
         if not isinstance(df, pd.DataFrame):
-            try:
-                df = pd.DataFrame(df)
-            else:
-                raise TypeError("`df` must be a pandas DataFrame")
+            df = pd.DataFrame(df)
         df.to_sql(name, self.db, **kwargs)
 
 
