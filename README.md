@@ -16,8 +16,7 @@ and
 
 ```python
   from wsdb import wsdb
-  rows = wsdb.query("<query>")
-  rows.dataset.df
+  df = wsdb.query("<query>")
 ```
 
 Requirements
