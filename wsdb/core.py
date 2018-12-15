@@ -71,5 +71,22 @@ class WSDB(records.Database):
         logger.debug('Query:\n'+query_get_table_columns)
         return self.query(query_get_table_columns)
 
+    def upload_df(self, df, name, **kwargs):
+        """Upload DataFrame to database
+
+        df : pd.DataFrame
+            table to upload
+        name : str
+            name of the table in the database
+
+        Other kwargs are passed to pd.DataFrame.to_sql
+        """
+        if not isinstance(df, pd.DataFrame):
+            try:
+                df = pd.DataFrame(df)
+            else:
+                raise TypeError("`df` must be a pandas DataFrame")
+        df.to_sql(name, self.db, **kwargs)
+
 
 wsdb = WSDB()
