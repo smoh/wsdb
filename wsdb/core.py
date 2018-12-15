@@ -1,4 +1,5 @@
 import os
+import logging
 import warnings
 import records
 from functools import lru_cache
@@ -8,6 +9,8 @@ __all__ = ['wsdb']
 curdir = os.path.dirname(os.path.abspath(__file__))
 
 warnings.filterwarnings('ignore', category=UserWarning)
+
+logger = logging.getLogger(__name__)
 
 class WSDB(records.Database):
     """ Whole Sky Database client """
@@ -65,7 +68,8 @@ class WSDB(records.Database):
             FROM information_schema.columns
             WHERE table_schema='{table_schema}' AND table_name='{table_name}'
             """.format(table_schema=table_schema, table_name=table_name)
-        return self.query(query_get_table_columns).dataset.df
+        logger.debug('Query:\n'+query_get_table_columns)
+        return self.query(query_get_table_columns)
 
 
 wsdb = WSDB()
