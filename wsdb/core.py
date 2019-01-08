@@ -116,6 +116,18 @@ class WSDB(records.Database):
         logger.debug('Query:\n'+query_get_table_columns)
         return self.query(query_get_table_columns)
 
+    @property
+    def mytables(self):
+        """
+        List of user table names
+        """
+        q = """
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema='{user}';
+            """.format(user=self.user)
+        return self.query(q)
+
     def upload_df(self, df, name, **kwargs):
         """Upload DataFrame to database
 
