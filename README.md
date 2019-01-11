@@ -1,7 +1,8 @@
 wsdb
 ====
 
-Routines for accessing wsdb. Not of general interest.
+Routines for accessing wsdb, a postgres database, from python.
+Not of general interest.
 
 Usage
 -----

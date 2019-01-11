@@ -16,7 +16,7 @@ def read(filename):
 setup(
     name="wsdb",
     version="0.1.0",
-    url=" ",
+    url="https://github.com/smoh/wsdb",
     license='MIT',
 
     author="Semyeong Oh",

@@ -142,5 +142,19 @@ class WSDB(records.Database):
             df = pd.DataFrame(df)
         df.to_sql(name, self.db, **kwargs)
 
+    def make_q3c_index(self, tablename, ra='ra', dec='dec'):
+        """Make Q3C index for the table
+
+        tablename : str
+            table to index
+        ra, dec : str
+            column names of RA and Dec
+        """
+        self.db.execute("CREATE INDEX ON {tablename} (qc3_ang2ipix({ra}, {dec}));".format(
+            tablename=tablename, ra=ra, dec=dec))
+        self.db.execute("CLUSTER {tablename}_q3c_ang2ipix_idx ON {tablename};".format(
+            tablename=tablename))
+        self.db.execute("ANALYZE {tablename};".format(tablename=tablename))
+
 
 wsdb = WSDB()
