@@ -32,10 +32,11 @@ def upload(db, df, name, **kwargs):
     """
     if not isinstance(df, pd.DataFrame):
         df = pd.DataFrame(df)
-    df.to_sql(name, db.db, **kwargs)
-    yield db
-    logger.debug('Deleting table')
-    db.db.execute('DROP TABLE {name}'.format(name=name))
+    with db.get_connection() as conn:
+        df.to_sql(name, conn._conn, **kwargs)
+        yield db
+        logger.debug('Deleting table')
+        conn._conn.execute('DROP TABLE {name}'.format(name=name))
 
 
 class WSDB(records.Database):
@@ -140,7 +141,8 @@ class WSDB(records.Database):
         """
         if not isinstance(df, pd.DataFrame):
             df = pd.DataFrame(df)
-        df.to_sql(name, self.db, **kwargs)
+        with self.get_connection() as conn:
+            df.to_sql(name, conn._conn, **kwargs)
 
     def make_q3c_index(self, tablename, ra='ra', dec='dec'):
         """Make Q3C index for the table
