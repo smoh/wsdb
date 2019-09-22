@@ -47,7 +47,7 @@ class WSDB(records.Database):
             user, pw = f.readlines()
             user, pw = user.strip(), pw.strip()
             super().__init__(
-                "postgres://{user}:{pw}@cappc127.ast.cam.ac.uk/wsdb".format(user=user, pw=pw))
+                "postgresql://{user}:{pw}@cappc127.ast.cam.ac.uk/wsdb".format(user=user, pw=pw))
 
         self.user = user
         self._tables = None
