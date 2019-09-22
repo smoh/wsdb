@@ -144,6 +144,17 @@ class WSDB(records.Database):
         with self.get_connection() as conn:
             df.to_sql(name, conn._conn, **kwargs)
 
+    def delete_table(self, tablename):
+        """Delete a table
+
+        tablename : str
+            table to delete
+        """
+        if not isinstance(tablename, str):
+            raise ValueError("'tablename' must be a string")
+        with self.get_connection() as conn:
+            conn._conn.execute("DROP TABLE {:s}".format(tablename))
+
     def make_q3c_index(self, tablename, ra='ra', dec='dec'):
         """Make Q3C index for the table
 
