@@ -50,6 +50,7 @@ class WSDB(records.Database):
                 "postgresql://{user}:{pw}@cappc127.ast.cam.ac.uk/wsdb".format(user=user, pw=pw))
 
         self.user = user
+        self.db = self._engine
         self._tables = None
         self._columns = None
 
@@ -163,7 +164,7 @@ class WSDB(records.Database):
         ra, dec : str
             column names of RA and Dec
         """
-        self.db.execute("CREATE INDEX ON {tablename} (qc3_ang2ipix({ra}, {dec}));".format(
+        self.db.execute("CREATE INDEX ON {tablename} (q3c_ang2ipix({ra}, {dec}));".format(
             tablename=tablename, ra=ra, dec=dec))
         self.db.execute("CLUSTER {tablename}_q3c_ang2ipix_idx ON {tablename};".format(
             tablename=tablename))
